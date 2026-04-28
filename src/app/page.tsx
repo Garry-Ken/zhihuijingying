@@ -2,7 +2,7 @@ import Link from "next/link";
 import { profile, services, testimonials } from "@/lib/data";
 import WechatButton from "@/components/WechatButton";
 import ServiceCard from "@/components/ServiceCard";
-import ContactCard from "@/components/ContactCard";
+import ContactForm from "@/components/ContactForm";
 
 export default function Home() {
   return (
@@ -132,17 +132,17 @@ export default function Home() {
       </section>
 
       {/* CTA with Contact */}
-      <section className="bg-primary text-white py-20">
-        <div className="max-w-4xl mx-auto px-6">
+      <section className="bg-primary py-20" id="contact">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               开启您的<span className="text-gold">知识资产</span>之旅
             </h2>
             <p className="text-white/70 text-lg">
-              如需定制专属服务方案，添加微信一对一深度沟通
+              填写下方表单，我们会在24小时内与您联系
             </p>
           </div>
-          <ContactCard />
+          <ContactForm />
         </div>
       </section>
     </div>
