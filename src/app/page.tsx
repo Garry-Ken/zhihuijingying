@@ -1,10 +1,23 @@
 import Link from "next/link";
-import { profile, services, testimonials } from "@/lib/data";
+import { getProfile, getServices, getTestimonials } from "@/lib/sanity";
 import WechatButton from "@/components/WechatButton";
-import ServiceCard from "@/components/ServiceCard";
 import ContactForm from "@/components/ContactForm";
 
-export default function Home() {
+// 动态渲染，确保每次请求都获取最新数据
+export const dynamic = "force-dynamic";
+
+async function getData() {
+  const [profile, services, testimonials] = await Promise.all([
+    getProfile(),
+    getServices(),
+    getTestimonials(),
+  ]);
+  return { profile, services, testimonials };
+}
+
+export default async function Home() {
+  const { profile, services, testimonials } = await getData();
+
   return (
     <div>
       {/* Hero */}
@@ -12,16 +25,16 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="max-w-3xl">
             <div className="text-gold text-sm font-medium tracking-widest uppercase mb-4">
-              {profile.brand} · 创始人
+              {profile?.brand || "智汇菁英"} · 创始人
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-              {profile.name}
+              {profile?.name || "金天雄"}
             </h1>
             <p className="text-xl md:text-2xl text-gold mb-6">
-              {profile.title}
+              {profile?.title || "AI高净值知识资产架构师 · 企业战略私董会导师"}
             </p>
             <p className="text-lg text-white/80 leading-relaxed mb-10 max-w-2xl">
-              {profile.description}
+              {profile?.description || ""}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <WechatButton size="lg" />
@@ -40,8 +53,8 @@ export default function Home() {
       <section className="bg-surface py-12 border-b border-border">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {profile.achievements.map((stat) => (
-              <div key={stat.label}>
+            {(profile?.achievements || []).map((stat: { value: string; label: string }, index: number) => (
+              <div key={index}>
                 <div className="text-3xl md:text-4xl font-bold text-primary">
                   {stat.value}
                 </div>
@@ -64,8 +77,38 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {services.map((service) => (
-              <ServiceCard key={service.id} service={service} />
+            {services.map((service: any) => (
+              <Link
+                key={service._id}
+                href={`/services/${service.id}`}
+                className="group bg-white border border-border rounded-2xl p-8 hover:shadow-xl hover:border-gold/50 transition-all duration-300"
+              >
+                <h3 className="text-xl font-semibold text-primary group-hover:text-gold-dark transition-colors mb-3">
+                  {service.name}
+                </h3>
+                <p className="text-sm text-muted leading-relaxed mb-6">
+                  {service.description}
+                </p>
+                <div className="space-y-3 mb-6">
+                  {(service.features || []).slice(0, 3).map((feature: string, i: number) => (
+                    <div key={i} className="flex items-start gap-2 text-sm">
+                      <span className="text-gold mt-0.5">✓</span>
+                      <span className="text-foreground">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="pt-6 border-t border-border flex items-center justify-between">
+                  <div>
+                    <span className="text-2xl font-bold text-gold-dark">
+                      {service.price}
+                    </span>
+                    <span className="text-sm text-muted ml-2">{service.duration}</span>
+                  </div>
+                  <span className="text-gold-dark text-sm font-medium group-hover:underline">
+                    了解详情 →
+                  </span>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -76,7 +119,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold text-primary mb-6">核心理念</h2>
           <p className="text-lg text-muted leading-relaxed mb-8">
-            {profile.philosophy}
+            {profile?.philosophy || ""}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             {[
@@ -108,9 +151,9 @@ export default function Home() {
             <p className="text-muted">来自真实的合作伙伴</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((item) => (
+            {(testimonials || []).map((item: any) => (
               <div
-                key={item.author}
+                key={item._id}
                 className="bg-white border border-border rounded-2xl p-8"
               >
                 <div className="text-gold text-3xl mb-4">&ldquo;</div>
