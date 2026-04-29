@@ -1,8 +1,11 @@
 import Link from "next/link";
-import { services } from "@/lib/data";
+import { getServices, getProfile } from "@/lib/config";
 import WechatButton from "@/components/WechatButton";
 
 export default function ServicesPage() {
+  const services = getServices();
+  const profile = getProfile();
+
   return (
     <div>
       {/* Header */}
@@ -32,6 +35,15 @@ export default function ServicesPage() {
                 <p className="text-lg text-muted leading-relaxed mb-6">
                   {service.description}
                 </p>
+
+                {/* 服务详情区块 */}
+                {service.detailSections && service.detailSections.map((section, i) => (
+                  <div key={i} className="mb-4 bg-surface rounded-xl p-4">
+                    <h4 className="font-semibold text-primary mb-1">{section.title}</h4>
+                    <p className="text-sm text-muted">{section.content}</p>
+                  </div>
+                ))}
+
                 <div className="bg-surface rounded-xl p-6 mb-6">
                   <div className="text-sm text-muted mb-2">服务报价</div>
                   <div className="flex items-baseline gap-3">
@@ -57,7 +69,7 @@ export default function ServicesPage() {
                 }`}
               >
                 <span className="text-6xl text-white/20">
-                  {index === 0 ? "👑" : index === 1 ? "🤖" : "🏢"}
+                  {service.icon || (index === 0 ? "👑" : index === 1 ? "🤖" : "🏢")}
                 </span>
               </div>
             </div>

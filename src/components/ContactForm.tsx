@@ -2,8 +2,12 @@
 
 import { useState } from "react";
 import WechatButton from "./WechatButton";
+import { getSettings, getProfile } from "@/lib/config";
 
 export default function ContactForm() {
+  const settings = getSettings();
+  const profile = getProfile();
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -35,20 +39,19 @@ export default function ContactForm() {
     setStatus("loading");
 
     try {
-      // 使用 Web3Forms API（免费，无需注册）
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           access_key: "06d97df7-3475-40b8-90af-65e330df511f",
-          subject: `智汇菁英网站新咨询 - ${formData.name}`,
-          from_name: "智汇菁英网站",
+          subject: `${profile.brand}网站新咨询 - ${formData.name}`,
+          from_name: `${profile.brand}网站`,
           name: formData.name,
           phone: formData.phone,
           email: formData.email,
           company: formData.company,
           message: formData.message,
-          to_email: "guruzen1913@gmail.com",
+          to_email: profile.email,
         }),
       });
 
@@ -69,7 +72,7 @@ export default function ContactForm() {
         <div className="text-5xl mb-4">✅</div>
         <h3 className="text-xl font-bold text-primary mb-2">提交成功！</h3>
         <p className="text-muted mb-6">
-          我们已收到您的咨询，24小时内会通过微信与您联系
+          {settings.successMessage}
         </p>
         <WechatButton size="lg" />
         <p className="text-sm text-muted mt-4">
@@ -81,16 +84,16 @@ export default function ContactForm() {
 
   return (
     <div className="bg-white rounded-2xl p-8">
-      <h3 className="text-xl font-bold text-primary mb-2">预约咨询</h3>
+      <h3 className="text-xl font-bold text-primary mb-2">{settings.contactFormTitle}</h3>
       <p className="text-muted text-sm mb-6">
-        填写以下信息，我们会尽快与您联系
+        {settings.contactFormSubtitle}
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <input type="hidden" name="access_key" value="06d97df7-3475-40b8-90af-65e330df511f" />
-        <input type="hidden" name="subject" value="智汇菁英网站新咨询" />
-        <input type="hidden" name="from_name" value="智汇菁英网站" />
-        <input type="hidden" name="to_email" value="guruzen1913@gmail.com" />
+        <input type="hidden" name="subject" value={`${profile.brand}网站新咨询`} />
+        <input type="hidden" name="from_name" value={`${profile.brand}网站`} />
+        <input type="hidden" name="to_email" value={profile.email} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>

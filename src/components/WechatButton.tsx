@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { getProfile } from "@/lib/config";
 
 export default function WechatButton({
   size = "md",
@@ -9,6 +10,7 @@ export default function WechatButton({
   size?: "sm" | "md" | "lg";
 }) {
   const [showQR, setShowQR] = useState(false);
+  const profile = getProfile();
 
   const sizeClasses = {
     sm: "px-4 py-2 text-sm",
@@ -53,6 +55,9 @@ export default function WechatButton({
               />
             </div>
             <p className="text-center text-muted text-sm mt-4">
+              微信号：{profile.wechat}
+            </p>
+            <p className="text-center text-muted text-sm mt-1">
               长按识别二维码，或截图保存
             </p>
             <button

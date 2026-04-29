@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { services, getService } from "@/lib/data";
-import WechatButton from "@/components/WechatButton";
+import { getService, getServices } from "@/lib/config";
 
 export function generateStaticParams() {
-  return services.map((s) => ({ id: s.id }));
+  return getServices().map((s) => ({ id: s.id }));
 }
 
 export default async function ServiceDetailPage({
@@ -18,13 +17,9 @@ export default async function ServiceDetailPage({
 
   return (
     <div>
-      {/* Header */}
       <section className="bg-gradient-to-br from-primary to-primary-light text-white py-16">
         <div className="max-w-7xl mx-auto px-6">
-          <Link
-            href="/services"
-            className="text-white/60 hover:text-white text-sm mb-6 inline-block transition-colors"
-          >
+          <Link href="/services" className="text-white/60 hover:text-white text-sm mb-6 inline-block transition-colors">
             ← 返回服务列表
           </Link>
           <h1 className="text-4xl font-bold mb-3">{service.name}</h1>
@@ -32,15 +27,12 @@ export default async function ServiceDetailPage({
         </div>
       </section>
 
-      {/* Content */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <div className="bg-surface rounded-2xl p-8">
               <div className="text-sm text-muted mb-2">服务报价</div>
-              <div className="text-3xl font-bold text-gold-dark">
-                {service.price}
-              </div>
+              <div className="text-3xl font-bold text-gold-dark">{service.price}</div>
               <div className="text-muted mt-1">{service.duration}</div>
             </div>
             <div className="bg-surface rounded-2xl p-8">
@@ -49,14 +41,30 @@ export default async function ServiceDetailPage({
             </div>
           </div>
 
+          {service.detailSections && service.detailSections.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold text-primary mb-6">服务详情</h2>
+              <div className="space-y-4">
+                {service.detailSections.map((section, index) => (
+                  <div key={index} className="flex items-start gap-4 bg-white border border-border rounded-xl p-6">
+                    <span className="w-8 h-8 rounded-full bg-gold/10 text-gold flex items-center justify-center font-bold shrink-0">
+                      {index + 1}
+                    </span>
+                    <div>
+                      <h3 className="font-semibold text-primary mb-1">{section.title}</h3>
+                      <p className="text-muted">{section.content}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-primary mb-6">服务内容</h2>
             <div className="space-y-4">
               {service.features.map((feature, index) => (
-                <div
-                  key={feature}
-                  className="flex items-start gap-4 bg-white border border-border rounded-xl p-6"
-                >
+                <div key={feature} className="flex items-start gap-4 bg-white border border-border rounded-xl p-6">
                   <span className="w-8 h-8 rounded-full bg-gold/10 text-gold flex items-center justify-center font-bold shrink-0">
                     {index + 1}
                   </span>
@@ -68,10 +76,10 @@ export default async function ServiceDetailPage({
 
           <div className="bg-primary text-white rounded-2xl p-8 text-center">
             <h2 className="text-2xl font-bold mb-4">开启您的专属服务</h2>
-            <p className="text-white/70 mb-6">
-              每位客户的需求都独一无二，请添加微信进行一对一深度沟通，为您定制专属方案
-            </p>
-            <WechatButton size="lg" />
+            <p className="text-white/70 mb-6">每位客户的需求都独一无二，请添加微信进行一对一深度沟通</p>
+            <Link href="/#contact" className="inline-block bg-gold text-primary px-8 py-3.5 rounded-full font-semibold text-lg hover:bg-gold-light transition-colors">
+              立即咨询
+            </Link>
           </div>
         </div>
       </section>
